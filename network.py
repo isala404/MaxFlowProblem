@@ -22,32 +22,59 @@ class Edge:
         self.flow += bottle_neck
         self.residual_node.flow -= bottle_neck
 
+    def to_string(self, s: int, t: int):
+        if self.source == s:
+            u = "s"
+        else:
+            if self.source == t:
+                u = "t"
+            else:
+                u = self.source
+
+        if self.destination == s:
+            v = "s"
+        else:
+            if self.destination == t:
+                v = "t"
+            else:
+                v = self.destination
+        return "Edge {} -> {} | flow = {:3d} | capacity = {:3d} | is residual: {}".format(u, v, self.flow,
+                                                                                          int(self.capacity),
+                                                                                          self.is_residual())
+
+    def __repr__(self):
+        return f"Edge {self.source} -> {self.destination}"
+
 
 class Network:
 
-    def __int__(self, network_size: int, source: int, sink: int):
+    def __init__(self, graph_size: int, source: int, sink: int):
         self.source = source
         self.sink = sink
-        self.network = [[]] * network_size
-        self.network_size = network_size
-        self.visited = [False] * self.network_size
+        # self.graph = [[]] * graph_size    # If we initialized graph this way element 0 is reference of element 1
+        #                                     so if we add something to element 0 it also get added to element 1
+        self.graph = [[] for i in range(graph_size)]
+        self.graph_size = graph_size
+        self.visited = [-1] * self.graph_size
         self.max_flow = 0
+        self.visitedToken = 1
 
-    def add_edge(self, node_1: int, node_2: int, capacity: float):
+    def add_edge(self, source: int, destination: int, capacity: float):
         if capacity <= 0:
             raise AttributeError("Edge capacity must be grater than 0")
-        if node_1 > self.network_size or node_1 > self.network_size:
-            raise AttributeError(f"Network should not have nodes more than {self.network_size}")
+        if source > self.graph_size or source > self.graph_size:
+            raise AttributeError(f"Network should not have nodes more than {self.graph_size}")
 
-        edge_1 = Edge(node_1, node_2, capacity)
-        edge_2 = Edge(node_2, node_1, 0)
+        edge_1 = Edge(source, destination, capacity)
+        edge_2 = Edge(destination, source, 0)
         edge_1.residual_node = edge_2
         edge_2.residual_node = edge_1
-        self.network[node_1].append(edge_1)
-        self.network[node_2].append(edge_2)
+        self.graph[source].append(edge_1)
+        self.graph[destination].append(edge_2)
 
     def calculate_max_flow(self):
         while (f := self.depth_first_search(self.source, float('inf'))) != 0:
+            self.visitedToken += 1
             self.max_flow += f
 
     # def breath_first_search(self, source: int, sink: int, ):
@@ -65,12 +92,11 @@ class Network:
         if node == self.sink:
             return flow
 
-        self.visited[node] = True
+        self.visited[node] = self.visitedToken
 
-        for edge in self.network[node]:
-            if edge.remaining_capacity() > 0 and self.visited[edge.destination]:
+        for edge in self.graph[node]:
+            if edge.remaining_capacity() > 0 and self.visited[edge.destination] != self.visitedToken:
                 bottle_neck = self.depth_first_search(edge.destination, min(flow, edge.remaining_capacity()))
-
                 if bottle_neck > 0:
                     edge.augment(bottle_neck)
                     return bottle_neck
