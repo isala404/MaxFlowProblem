@@ -39,13 +39,6 @@ class Edge:
         self.flow += bottle_neck
         self.residual_node.flow -= bottle_neck
 
-    def to_string(self):
-        return "Edge {} -> {} | flow = {:3d} | capacity = {:3d} | is residual: {}".format(self.source_name,
-                                                                                          self.destination_name,
-                                                                                          self.flow,
-                                                                                          int(self.capacity),
-                                                                                          self.is_residual())
-
     def __repr__(self):
         return f"Edge {self.source} -> {self.destination}"
 
@@ -89,17 +82,6 @@ class Network:
         while (f := self.depth_first_search(self.source, float('inf'))) != 0:
             self.visitedToken += 1
             self.max_flow += f
-
-    # def breath_first_search(self, source: int, sink: int, ):
-    #     visited = [False] * self.network_size
-    #     search_queue = Queue(maxsize=self.network_size)
-    #     search_queue.put(source)
-    #     visited[source] = True
-    #     while not search_queue.empty():
-    #         source_vertex = search_queue.get()
-    #
-    #         for i, adjacent_vertex in enumerate(self.network[source_vertex]):
-    #             if not visited[i]
 
     def depth_first_search(self, node: int, flow: float):
         if node == self.sink:
