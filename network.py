@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 from typing import NewType
 from queue import Queue
 from gui import GUI
@@ -54,12 +55,13 @@ class Network:
         self.sink = sink
         # self.graph = [[]] * graph_size    # If we initialized graph this way element 0 is reference of element 1
         #                                     so if we add something to element 0 it also get added to element 1
-        self.graph = [[] for i in range(graph_size+1)]
-        self.graph_size = graph_size
-        self.visited = [-1] * (graph_size + 1)
+        self.graph = defaultdict(list)
+        self.visited = defaultdict(bool)
         self.max_flow = 0
-        self.visitedToken = 1
         self.gui = gui
+
+    def network_size(self):
+        return len(self.graph)
 
     def add_edge(self,
                  source: int,
@@ -70,8 +72,8 @@ class Network:
 
         if capacity <= 0:
             raise AttributeError("Edge capacity must be grater than 0")
-        if source > self.graph_size or source > self.graph_size:
-            raise AttributeError(f"Network should not have nodes more than {self.graph_size}")
+        # if source > self.network_size() or source > self.network_size():
+        #     raise AttributeError(f"Network should not have nodes more than {self.network_size()}")
 
         edge_1 = Edge(source, destination, capacity, source_name, destination_name)
         edge_2 = Edge(destination, source, 0, source_name, destination_name)
@@ -84,22 +86,20 @@ class Network:
             self.gui.add_edge(edge_1.source_name, edge_1.destination_name, edge_1.capacity)
 
     def calculate_max_flow(self):
-        self.visited = [-1] * (self.graph_size + 1)
+        self.visited.clear()
         self.max_flow = 0
-        self.visitedToken = 0
-        while (f := self.depth_first_search(self.source, float('inf'))) != 0:
-            self.visitedToken += 1
+        while (f := self._depth_first_search(self.source, float('inf'))) != 0:
             self.max_flow += f
 
-    def depth_first_search(self, node: int, flow: float):
+    def _depth_first_search(self, node: int, flow: float):
         if node == self.sink:
             return flow
 
-        self.visited[node] = self.visitedToken
+        self.visited[node] = True
 
         for edge in self.graph[node]:
-            if edge.remaining_capacity() > 0 and self.visited[edge.destination] != self.visitedToken:
-                bottle_neck = self.depth_first_search(edge.destination, min(flow, edge.remaining_capacity()))
+            if edge.remaining_capacity() > 0 and not self.visited[edge.destination]:
+                bottle_neck = self._depth_first_search(edge.destination, min(flow, edge.remaining_capacity()))
                 if bottle_neck > 0:
                     edge.augment(bottle_neck)
                     return bottle_neck
@@ -110,11 +110,11 @@ class Network:
             os.mkdir("datasets")
 
         with open(f"datasets/{file}", "w") as f:
-            f.write(f"Size = {self.graph_size}\n")
+            f.write(f"Size = {self.network_size()}\n")
             f.write(f"Source = {self.source}\n")
             f.write(f"Sink = {self.sink}\n")
-            for node in self.graph:
-                for edge in node:
+            for node in sorted(self.graph):
+                for edge in self.graph[node]:
                     if edge.capacity > 0:
                         f.write(f"{edge}\n")
 

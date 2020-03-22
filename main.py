@@ -11,7 +11,7 @@ if not os.path.isdir("datasets"):
 for file in sorted(os.listdir("datasets")):
     network, gui = Network.load(file)
     time_taken = timeit.timeit(lambda: network.calculate_max_flow(), number=1000) * 1000
-    print("Dataset:", file, "Size:", network.graph_size, "MaxFlow:", network.max_flow,
+    print("Dataset:", file, "Size:", network.network_size(), "MaxFlow:", network.max_flow,
           "Time Taken:", round(time_taken, 2), " milliseconds")
     # gui.draw(network.graph_size // 1.5)
 
