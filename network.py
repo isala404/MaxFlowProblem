@@ -56,12 +56,13 @@ class Network:
         # self.graph = [[]] * graph_size    # If we initialized graph this way element 0 is reference of element 1
         #                                     so if we add something to element 0 it also get added to element 1
         self.graph = defaultdict(list)
-        self.visited = defaultdict(bool)
+        self.visited = [-1] * graph_size
+        self.visitedToken = 1
         self.max_flow = 0
         self.gui = gui
 
     def network_size(self):
-        return len(self.graph)
+        return len(self.graph) + 1
 
     def add_edge(self,
                  source: int,
@@ -86,19 +87,20 @@ class Network:
             self.gui.add_edge(edge_1.source_name, edge_1.destination_name, edge_1.capacity)
 
     def calculate_max_flow(self):
-        self.visited.clear()
-        self.max_flow = 0
+        # self.visited.clear()
+        # self.max_flow = 0
         while (f := self._depth_first_search(self.source, float('inf'))) != 0:
+            self.visitedToken += 1
             self.max_flow += f
 
     def _depth_first_search(self, node: int, flow: float):
         if node == self.sink:
             return flow
 
-        self.visited[node] = True
+        self.visited[node] = self.visitedToken
 
         for edge in self.graph[node]:
-            if edge.remaining_capacity() > 0 and not self.visited[edge.destination]:
+            if edge.remaining_capacity() > 0 and self.visited[edge.destination] != self.visitedToken:
                 bottle_neck = self._depth_first_search(edge.destination, min(flow, edge.remaining_capacity()))
                 if bottle_neck > 0:
                     edge.augment(bottle_neck)
