@@ -86,6 +86,7 @@ class Network:
     def calculate_max_flow(self):
         self.visited = [-1] * (self.graph_size + 1)
         self.max_flow = 0
+        self.visitedToken = 0
         while (f := self.depth_first_search(self.source, float('inf'))) != 0:
             self.visitedToken += 1
             self.max_flow += f

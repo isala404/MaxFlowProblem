@@ -3,7 +3,6 @@ from gui import GUI
 import timeit
 import os
 
-
 gui = GUI()
 
 if not os.path.isdir("datasets"):
@@ -11,9 +10,10 @@ if not os.path.isdir("datasets"):
 
 for file in sorted(os.listdir("datasets")):
     network, gui = Network.load(file)
-    time_taken = timeit.timeit(lambda: network.calculate_max_flow(), number=1000)
-    print(f"Dataset: {file}, Size: {network.graph_size}, MaxFlow: {network.max_flow}, Time Taken: {time_taken} milliseconds")
-    gui.draw(network.graph_size//1.5)
+    time_taken = timeit.timeit(lambda: network.calculate_max_flow(), number=1000) * 1000
+    print("Dataset:", file, "Size:", network.graph_size, "MaxFlow:", network.max_flow,
+          "Time Taken:", round(time_taken, 2), " milliseconds")
+    # gui.draw(network.graph_size // 1.5)
 
 # network = Network(6, 0, 5, gui)
 #
