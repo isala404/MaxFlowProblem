@@ -1,7 +1,7 @@
+import copy
 import os
 from collections import defaultdict
 from typing import NewType
-from queue import Queue
 from gui import GUI
 
 
@@ -73,8 +73,8 @@ class Network:
 
         if capacity <= 0:
             raise AttributeError("Edge capacity must be grater than 0")
-        # if source > self.network_size() or source > self.network_size():
-        #     raise AttributeError(f"Network should not have nodes more than {self.network_size()}")
+        if source > self.network_size() or source > self.network_size():
+            raise AttributeError(f"Network should not have nodes more than {self.network_size()}")
 
         edge_1 = Edge(source, destination, capacity, source_name, destination_name)
         edge_2 = Edge(destination, source, 0, source_name, destination_name)
@@ -86,12 +86,19 @@ class Network:
         if self.gui:
             self.gui.add_edge(edge_1.source_name, edge_1.destination_name, edge_1.capacity)
 
-    def calculate_max_flow(self):
-        # self.visited.clear()
-        # self.max_flow = 0
+    def calculate_max_flow(self, reset=True):
+        graph = None
+        if reset:
+            self.visited = [-1] * self.network_size()
+            self.max_flow = 0
+            self.visitedToken = 1
+            graph = copy.deepcopy(self.graph)
         while (f := self._depth_first_search(self.source, float('inf'))) != 0:
             self.visitedToken += 1
             self.max_flow += f
+
+        if reset and graph:
+            self.graph = graph
 
     def _depth_first_search(self, node: int, flow: float):
         if node == self.sink:

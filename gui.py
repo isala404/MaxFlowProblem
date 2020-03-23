@@ -16,7 +16,6 @@ class GUI:
 
         plt.figure(figsize=(vertices, vertices))
 
-        # pos = nx.spring_layout(self.G, k=10, iterations=100)  # positions for all nodes
         pos = nx.shell_layout(self.G)
 
         for (u, v, d) in self.G.edges(data=True):
