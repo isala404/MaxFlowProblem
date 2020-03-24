@@ -1,5 +1,13 @@
+# Name - Isala Piyarisi
+# IIT - 2018421
+# UOW ID - w1742118
+
 from random import randint
 from network import Network
+import os
+
+if not os.path.isdir("datasets"):
+    os.makedirs("datasets")
 
 network, _ = Network.load("../sample_dataset")
 network.save("0-vertices-6,edges-11")
@@ -29,23 +37,22 @@ def add_edge(source_node, network_size):
     return True
 
 
-for m in range(9):
+for m in range(8):
     need_vertices *= 2
     need_edges *= 2
     first_iteration = True
+
+    for i in range(current_vertices, need_vertices - 1):
+        if add_edge(i, need_vertices - 1):
+            current_edges += 1
+    current_vertices = need_vertices
+
     while current_edges < need_edges:
-        if first_iteration:
-            for i in range(current_vertices, need_vertices - 1):
-                current_edges += 1
-                add_edge(i, need_vertices)
-            current_vertices = need_vertices
-            first_iteration = False
-        else:
-            for i in range(0, need_vertices - 1):
-                if randint(0, 2):
-                    if current_edges >= need_edges:
-                        break
+        for i in range(0, need_vertices - 1):
+            if randint(0, 2):
+                if current_edges >= need_edges:
+                    break
+                if add_edge(i, need_vertices - 1):
                     current_edges += 1
-                    add_edge(i, need_vertices)
 
     network.save(f"{m + 1}-vertices-{network.network_size()},edges-{current_edges}")

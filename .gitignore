@@ -193,5 +193,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-datasets/
+datasets*
 # End of https://www.gitignore.io/api/python,pycharm+all

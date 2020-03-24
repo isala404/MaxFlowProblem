@@ -1,3 +1,7 @@
+# Name - Isala Piyarisi
+# IIT - 2018421
+# UOW ID - w1742118
+
 import copy
 import os
 from collections import defaultdict
@@ -41,8 +45,11 @@ class Edge:
         self.flow += bottle_neck
         self.residual_node.flow -= bottle_neck
 
+    def __eq__(self, other):
+        return self.source == other.source and self.destination == other.destination and self.capacity == other.capacity
+
     def __repr__(self):
-        return f"Edge {self.source} -> {self.destination}"
+        return f"Edge {self.source} -> {self.destination} = {self.capacity}"
 
     def __str__(self):
         return f"{self.source_name} -> {self.destination_name} = {self.capacity}"
@@ -73,8 +80,8 @@ class Network:
 
         if capacity <= 0:
             raise AttributeError("Edge capacity must be grater than 0")
-        if source > self.network_size() or source > self.network_size():
-            raise AttributeError(f"Network should not have nodes more than {self.network_size()}")
+        # if source > self.network_size():
+        #     raise AttributeError(f"Network should not have nodes more than {self.network_size()}")
 
         edge_1 = Edge(source, destination, capacity, source_name, destination_name)
         edge_2 = Edge(destination, source, 0, source_name, destination_name)
@@ -84,7 +91,16 @@ class Network:
         self.graph[destination].append(edge_2)
 
         if self.gui:
-            self.gui.add_edge(edge_1.source_name, edge_1.destination_name, edge_1.capacity)
+            self.gui.add_edge(edge_1.source_name, edge_1.destination_name, edge_1)
+
+    def remove_edge(self, source: int, destination: int, capacity: float):
+        edge_1 = Edge(source, destination, capacity)
+        edge_2 = Edge(destination, source, 0)
+        original_edge = self.graph[source][self.graph[source].index(edge_1)]
+        self.graph[source].remove(edge_1)
+        self.graph[destination].remove(edge_2)
+        if self.gui:
+            self.gui.G.remove_edge(original_edge.source_name, original_edge.destination_name)
 
     def calculate_max_flow(self, reset=True):
         graph = None
