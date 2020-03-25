@@ -84,7 +84,11 @@ One node on the graph can have many edges, So I combined defaultdict with a list
 9. Repeat 3,4,5,6 till there are no more augmenting (alternative) paths in the network
 10. When there is no more augmenting paths the value of the variable max\_flow maximum flow of the network
 
- ![Initial Graph](img/un-solved.png "Initial Graph") ![After the max flow calculation](img/solved.png "After the max flow calculation")
+|                                                   |                                                                                  |
+| :-----------------------------------------------: |:--------------------------------------------------------------------------------:|
+|![Initial Graph](img/un-solved.png "Initial Graph")|![After the max flow calculation](img/solved.png "After the max flow calculation")|
+| **Initial Graph**                                 | **After the max flow calculation**                                               | 
+
 
 ## Performance analysing
 
@@ -103,12 +107,12 @@ I created the script that scale given N times by the factor of M. I gave the sam
 |  768 |  1977.33 | 3.58    | 1.84       |        173 |    1408 |                243584 |
 | 1536 | 24329.2  | 12.3    | 3.62       |        794 |    2816 |               2235904 |
 ```
-*Raw data outputted from benchmarking script I wrote*
+*Raw data outputted from benchmark.py*
 
 
  ![Time Complexity](img/time-complexity.png "Time Complexity")
 
-*Visualization of that data*
+*Visualization of that Time Complexity*
 
 ## Conclusions
 
