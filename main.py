@@ -4,6 +4,9 @@
 
 from network import Network
 from gui import GUI
+import sys
+if sys.version_info[0] < 3 and sys.version_info[1] <= 8:
+    raise Exception("To run this program you need Python 3.8 or higher")
 
 gui = GUI()
 
@@ -26,13 +29,13 @@ network.add_edge(4, 3, 10)
 network.add_edge(3, 5, 3, destination_name="T")
 network.add_edge(4, 5, 14, destination_name="T")
 
+gui.draw(5)
 
-network.calculate_max_flow(reset=True)
+network.calculate_max_flow(reset=True, visualize=True)
 
 print("Max Floor", network.max_flow)
 
-
-gui.draw(6)
+# gui.draw(5)
 
 # network.remove_edge(4, 5, 14)
 #

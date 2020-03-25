@@ -2,6 +2,8 @@
 # IIT - 2018421
 # UOW ID - w1742118
 
+# This is simple script I wrote to scale a given graph n times by 2 in every iteration
+
 from random import randint
 from network import Network
 import os
