@@ -94,7 +94,7 @@ class Edge:
 
 class Network:
 
-    def __init__(self, graph_size: int, source: int, sink: int, gui: GUI = None):
+    def __init__(self, source: int, sink: int, gui: GUI = None):
         self.source = source
         self.sink = sink
         # self.graph = [[]] * graph_size    # If we initialized graph this way element 0 is reference of element 1
@@ -114,7 +114,7 @@ class Network:
     def add_edge(self,
                  source: int,
                  destination: int,
-                 capacity: int,
+                 capacity: int = 0,
                  source_name: str = None,
                  destination_name: str = None):
         """
@@ -127,8 +127,8 @@ class Network:
         :param destination_name: Name of destination node if Any (ex - T = Sink Node of the Network)
                                  This is used only when visualizing the graph
         """
-        if capacity <= 0:
-            raise AttributeError("Edge capacity must be grater than 0")
+        if capacity < 0:
+            raise AttributeError("Edge capacity must be equal grater than 0")
 
         # Create a object out of Edge class for forward edge
         edge_1 = Edge(source, destination, capacity, source_name, destination_name)
@@ -153,6 +153,27 @@ class Network:
         if self.gui:
             self.gui.add_edge(edge_1.source_name, edge_1.destination_name, edge_1)
 
+    def modify_edge(self,
+                    source: int,
+                    destination: int,
+                    capacity: int = 0,
+                    source_name: str = None,
+                    destination_name: str = None):
+        """
+        Update the link between 2 Nodes in the graph
+        :param source: Index of the source node of the edge
+        :param destination: Index of the destination node of the edge
+        :param capacity: Maximum flow capacity of the Edge/Link
+        :param source_name: Name of source node if Any (ex - S = Source Node of the Network)
+                            This is used only when visualizing the graph
+        :param destination_name: Name of destination node if Any (ex - T = Sink Node of the Network)
+                                 This is used only when visualizing the graph
+        """
+        for edge in self.graph[source]:
+            if edge.source == source and edge.destination == destination_name and not edge.is_residual():
+                self.remove_edge(edge.source, edge.destination, edge.capacity)
+        self.add_edge(source, destination, capacity, source_name, destination_name)
+
     def remove_edge(self, source: int, destination: int, capacity: int):
         """
         Remove connection between 2 nodes
@@ -176,9 +197,9 @@ class Network:
         if self.gui:
             self.gui.G.remove_edge(original_edge.source_name, original_edge.destination_name)
 
-    def calculate_max_flow(self, reset=True, visualize=False):
+    def calculate_max_flow(self, reset=False, visualize=False):
         """
-        Calculate max flow Ford-Fulkerson Algorithm and Dept First Search
+        Calculate max flow using Ford-Fulkerson Algorithm and Dept First Search
         :param visualize: whether to visualize graph after every new augmenting path was found
         :param reset: reset the graph after max flow calculation
         """
@@ -274,7 +295,7 @@ class Network:
             t = int(lines[2].replace("Sink = ", ""))
 
             # cls is reference to the currant class which is passed by python
-            network = cls(size, s, t, gui)
+            network = cls(s, t, gui)
 
             for line in lines[3:]:
                 # Parse Every Edge of the network from the file

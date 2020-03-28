@@ -31,7 +31,9 @@ class GUI:
 
         # Draw edges between nodes
         for (u, v, d) in self.G.edges(data=True):
-            nx.draw_networkx_edges(self.G, pos, edgelist=[(u, v)], width=3, alpha=d['edge'].capacity / max_cap,
+            nx.draw_networkx_edges(self.G, pos, edgelist=[(u, v)], width=3,
+                                   # if not for min if capacity 0 edge will not be visible
+                                   alpha=max(0.1, d['edge'].capacity / max_cap),
                                    edge_color='black')
 
         # Add Labels to the nodes
