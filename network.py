@@ -48,8 +48,8 @@ class Edge:
         # flow of edge is 0 at start
         self.flow = 0
 
-        # Placeholder for residual node
-        self.residual_edge = NewType('residual_node', Edge)
+        # Placeholder for residual edge
+        self.residual_edge = NewType('residual_edge', Edge)
 
     def is_residual(self) -> bool:
         """
