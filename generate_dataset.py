@@ -8,6 +8,8 @@ from random import randint
 from network import Network
 import os
 
+# Run this if you want to override the current dataset
+
 if not os.path.isdir("datasets"):
     os.makedirs("datasets")
 

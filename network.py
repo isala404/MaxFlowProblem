@@ -95,6 +95,12 @@ class Edge:
 class Network:
 
     def __init__(self, source: int, sink: int, gui: GUI = None):
+        """
+        Initiate the graph
+        :param source: Index of the Source node
+        :param sink: Index of the Sink node
+        :param gui: Instance of the GUI object
+        """
         self.source = source
         self.sink = sink
         # self.graph = [[]] * graph_size    # If we initialized graph this way element 0 is reference of element 1

@@ -1,6 +1,19 @@
 # Max Flow Problem Using Ford-Fulkerson Algorithm
-Demo Video Link - https://youtu.be/vPlogVvlSGw
+
+Demo Video Link - <https://youtu.be/vPlogVvlSGw>
+
+Issues in the video
+- In 16:56, when I say all the edge I forgot to mention this contains residuals too this way all the bad paths are automatically get fixed for example if it goes from 1-2 on the forward edge and it guess from 2-1 in residual edge that action will cancel out the first action because when updating the flow value the first edge's residual is the second edge and the second edge’s residual is the first edge.
+```python
+    self.flow += bottle_neck
+    self.residual_edge.flow -= bottle_neck
+```
+- In 29:58 I said big o complexity There the thing I meant to say was time complexity.
+- In 32:02 I pointed at an edge and said it was a dead end but it’s not a dead end to it to be a dead end the arrow should goes from 13 to 18 not 18 to 13.
+
+
 # Setup project locally
+
 #### Dependencies
 - Python 3.8+ (this won't work on lower version of python)
 - PIP
@@ -20,12 +33,79 @@ Demo Video Link - https://youtu.be/vPlogVvlSGw
 └── sample_dataset      # Sample Data Set
 ```
 #### How to Run
+
+##### There are 2 ways project
+
+###### Using PyCharm (recommended) 
+1. Extract the project
+2. Open the project with PyCharm
+3. Open the integrated terminal to pycharm
+4. Run `pip3 install -r requirements.txt` in the terminal
+5. Open `main.py`
+6. Modify the network as you wish
+7. Right click `main.py` then click **RUN**
+
+###### Using Terminal
 ```shell script
+cd ~/Downloads/
+unzip MaxFlowProblem.zip
+cd MaxFlowProblem
 pip3 install -r requirements.txt
 python3 main.py
 ```
-> Note - If you are using windows remove '3' from pip and python
+Notes
+ - If you are using windows remove '3' from pip and python
+ - When you are running this using the terminal which time a graph is shown program will hang till the shown graph is closed
 
+#### How to Modify the Flow network
+There 2 ways run this algorithm on custom dataset
+##### By creating the graph using python objects (recommended) 
+First you need to create graph by calling the constructor of Network Object
+
+It accept 3 parameters
+   - source: Index of the Source node
+   - sink: Index of the Sink node
+   - gui: Instance of the GUI object
+
+then call the `add_edge` method on the network object and pass values for following parameters
+   - source: Index of the source node of the edge
+   - destination: Index of the destination node of the edge
+   - capacity: Maximum flow capacity of the Edge/Link
+   - source_name: Name of source node if Any (ex - S = Source Node of the Network)
+                  This is used only when visualizing the graph
+   - destination_name: Name of destination node if Any (ex - T = Sink Node of the Network)
+                       This is used only when visualizing the graph
+
+After network is fully completed call `gui.draw(6)` it will show the current graph
+
+Then to get the max flow the network call these 2 functions
+```python
+# If you don't wish to update the graph set reset to False
+# If you put visualize as True it will show the graph after it found every augmenting path
+network.calculate_max_flow(reset=True, visualize=False)
+print("MaxFlow of the Network is :", network.max_flow)
+```
+##### By reading from file
+Create file which is in the format of `sample_dataset`
+
+Here First 3 line gives the meta data about the graph
+1. Size of the Graph
+2. Index of the Source node of the graph
+3. Index of the Sink node of the graph
+
+Then for Add line for every edge in the graph in this format
+```
+index_of_source_node_of_the_edge -> index_of_destination_node_of_the_edge = capacity_of_the_edge
+ex - 1 -> 2 = 5
+
+If source node of the edge is the Source node of the graph put "S" instaded of index
+ex - S -> 1 = 10
+
+If destination node of the edge is the Sink node of the graph put "T" instaded of index
+ex - 3 -> T = 3
+```
+
+Then run `custom_graph.py` and give the file name
 ## Algorithmic Approach
 
 ### Algorithmic strategy
@@ -44,9 +124,9 @@ So to find the maximum flow we need calculate all the bottleneck (minimum cut) v
 
 I my solution I have 3 main data structures,
 
-1. defaultdict - it&#39;s python dictionary (hashmap in java world) which comes default value each time we add new key
+1. defaultdict - it's python dictionary (hashmap in java world) which comes default value each time we add new key
 2. Edge - this is custom class I implement hold the data about given edge (source, destination, capacity, etc)
-3. List - it&#39;s mutable array I which I can add and remove values at will
+3. List - it's mutable array I which I can add and remove values at will
 
 **Reason for using defaultdict**
 
